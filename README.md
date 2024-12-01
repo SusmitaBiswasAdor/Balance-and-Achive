@@ -2,7 +2,7 @@
 <!--installation procedure-->
 
 # installation Guide
-# Prerequisites
+## Prerequisites
 1. PHP >= 8.0
 2. Composer
 3. Node.js and npm

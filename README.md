@@ -14,22 +14,22 @@ git clone (https://github.com/SusmitaBiswasAdor/task-and-budget.git)
 cd your-repository-name
 ```
 
-# Step 2: Install PHP Dependencies
+## Step 2: Install PHP Dependencies
 ```
 composer install
 ```
 
-# Step 3: Install Node.js Dependencies
+## Step 3: Install Node.js Dependencies
 ```
 npm install
 ```
-# Step 4: Set Up Environment File
+## Step 4: Set Up Environment File
 
 Copy the example environment file and generate an application key:
 
-# Step 5: Configure Database
-```
-```
+## Step 5: Configure Database
+
+
 Open the .env file and update the database configuration to match your local environment:
 ```
 
@@ -41,14 +41,14 @@ DB_USERNAME=root
 ```
 
 
-# Step 6: Run Migrations
+## Step 6: Run Migrations
 Run the database migrations:
 ```
 
 php artisan migrate
 ```
 
-# Step 7: Compile Assets
+## Step 7: Compile Assets
 Compile the assets using Vite:
 ```
 
@@ -64,7 +64,7 @@ npm run build
 
 
 
-# Step 8: Clear Cache
+## Step 8: Clear Cache
 Clear your application cache to ensure the changes take effect:
 ```
 
@@ -75,14 +75,14 @@ php artisan view:clear
 ```
 
 
-# Step 11: Start the Development Server
+## Step 9: Start the Development Server
 Start your Laravel development server:
 ```
 php artisan serve
 ```
 
 
-# Step 10: Access Your Application
+## Step 10: Access Your Application
 Now, you should be able to access your Laravel application by navigating to http://your-project.local or http://localhost:8000 in your web browser.
 
 Troubleshooting

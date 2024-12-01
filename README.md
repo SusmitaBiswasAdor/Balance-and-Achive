@@ -2,12 +2,14 @@
 <!--installation procedure-->
 
 # installation Guide
+Follow this guide to install on your pc
 ## Prerequisites
 1. PHP >= 8.0
 2. Composer
 3. Node.js and npm
 4. XAMPP or any other local server environment
-# Step 1: Clone the Repository
+5. 
+## Step 1: Clone the Repository
 
 ``` 
 git clone (https://github.com/SusmitaBiswasAdor/task-and-budget.git)

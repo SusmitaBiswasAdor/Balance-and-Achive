@@ -10,8 +10,8 @@ installation Guide
 #Step 1: Clone the Repository
 
 ``` 
-git clone https://github.com/your-username/your-repository.git
-cd your-repository 
+git clone (https://github.com/SusmitaBiswasAdor/task-and-budget.git)
+cd your-repository-name
 ```
 
 #Step 2: Install PHP Dependencies

@@ -28,6 +28,9 @@ npm install
 ## Step 4: Set Up Environment File
 
 Copy the example environment file and generate an application key:
+```
+cp .env.example .env
+```
 
 ## Step 5: Configure Database
 

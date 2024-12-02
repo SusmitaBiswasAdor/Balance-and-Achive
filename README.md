@@ -8,7 +8,7 @@ Follow this guide to install on your pc
 2. Composer
 3. Node.js and npm
 4. XAMPP or any other local server environment
-5. 
+ 
 ## Step 1: Clone the Repository
 
 ``` 

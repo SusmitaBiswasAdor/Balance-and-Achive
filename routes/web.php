@@ -41,6 +41,23 @@ Route::get('/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.e
 Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
 Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
+#bilash start 
+// Budget Routes
+// Add Budget Form Route
+Route::get('/budgets/create', [BudgetController::class, 'create'])->name('budgets.create');
+
+// View Budgets Table Route
+Route::get('/budgets', [BudgetController::class, 'index'])->name('budgets.index');
+
+// Store Budget Route
+Route::post('/budgets', [BudgetController::class, 'store'])->name('budgets.store');
+
+Route::delete('/budgets/{id}', [BudgetController::class, 'destroy'])->name('budgets.destroy');
+
+Route::get('/budgets/spend', [BudgetController::class, 'spend'])->name('budgets.spend');
+Route::post('/budgets/spend', [BudgetController::class, 'storeSpend'])->name('budgets.storeSpend');
+#bilash end
+
 //Subtask routes
 Route::prefix('tasks/{task}/subtasks')->group(function () {
     Route::get('/', [SubtaskController::class, 'index'])->name('subtasks.index');

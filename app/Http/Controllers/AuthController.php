@@ -70,6 +70,7 @@ class AuthController extends Controller
             'phone' => $request->phone,
             'dob' => $request->dob,
             'password' => Hash::make($request->password),
+            'active' => true,  //atanu
         ]);
 
         // Debugging: Check if user is successfully created

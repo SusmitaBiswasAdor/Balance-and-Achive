@@ -6,6 +6,7 @@ use App\Http\Controllers\ForgetPasswordController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\OtpVerificationController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\AdminController;  // atanu
 
 Route::get('/', function () {
     return view('welcome');
@@ -39,3 +40,7 @@ Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
 Route::get('/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
 Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
 Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+
+Route::get('/admin', [AdminController::class, 'showAdmin'])->name('admin');
+Route::get('/admin/manage-users', [AdminController::class, 'manageUsers'])->name('admin.manage-users');
+Route::patch('/admin/users/{user}', [AdminController::class, 'updateUserStatus'])->name('admin.update-user-status');

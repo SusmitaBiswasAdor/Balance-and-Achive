@@ -1,0 +1,9 @@
+{
+  "name": "task-and-budget",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {},
+  "dependencies": {
+    "task-and-budget": "file:"
+  }
+}

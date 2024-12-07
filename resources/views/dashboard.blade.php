@@ -15,9 +15,14 @@
                     <a href="{{ route('tasks.create') }}" class="inline-block px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition ml-2">Create Task</a>
                 </div>
             </div>
+            <!-- Budget Tracking Section -->    
             <div class="feature bg-green-100 p-4 rounded-lg shadow-sm">
                 <h2 class="text-2xl font-semibold mb-2">Budget Tracking</h2>
                 <p>Keep your finances in check.</p>
+                <div class="mt-4">
+                    <a href="{{ route('budgets.create') }}" class="inline-block px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition">Add Monthly Budget</a>
+                    <a href="{{ route('budgets.index') }}" class="inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition ml-2">View Monthly Budget</a>
+                </div>
             </div>
             <!-- Add more features as needed -->
         </div>

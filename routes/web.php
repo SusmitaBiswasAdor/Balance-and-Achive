@@ -6,6 +6,7 @@ use App\Http\Controllers\ForgetPasswordController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\OtpVerificationController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\BudgetController;
 
 Route::get('/', function () {
     return view('welcome');

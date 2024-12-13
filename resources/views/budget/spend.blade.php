@@ -7,13 +7,15 @@
     <form method="POST" action="{{ route('budgets.storeSpend') }}">
         @csrf
 
-        <!-- Planned Budget Categories -->
+        <!-- Budget Categories with Months -->
         <div class="mb-6 border border-gray-300 p-4 rounded-md">
-            <label for="category" class="block font-semibold mb-2">Your Planned Budget Categories</label>
+            <label for="category_month" class="block font-semibold mb-2">Your Planned Budget Categories and Months</label>
             <div class="border border-gray-300 rounded-md">
-                <select name="category" required class="w-full border-none rounded-md p-2 focus:ring focus:ring-blue-300">
-                    @foreach ($categories as $category)
-                        <option value="{{ $category }}">{{ $category }}</option>
+                <select name="category_month" required class="w-full border-none rounded-md p-2 focus:ring focus:ring-blue-300">
+                    @foreach ($budgets as $budget)
+                        <option value="{{ $budget->id }}">
+                            {{ $budget->category }} ({{ \Carbon\Carbon::parse($budget->month_year)->format('F Y') }})
+                        </option>
                     @endforeach
                 </select>
             </div>

@@ -1,18 +1,50 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Budget;
 
 class BudgetController extends Controller
 {
     // Show the Budget Table
-    public function index()
+    public function index(Request $request)
     {
-        $budgets = Budget::where('user_id', auth()->id())->get();
-        return view('budget.index', compact('budgets'));
+        // Fetch distinct months from the database
+        $months = Budget::selectRaw('DISTINCT MONTH(month_year) as month')
+            ->orderBy('month') // Sort months in ascending order
+            ->pluck('month')
+            ->mapWithKeys(function ($month) {
+                return [$month => \DateTime::createFromFormat('!m', $month)->format('F')];
+            });
+
+        // Fetch distinct years from the database
+        $years = Budget::selectRaw('DISTINCT YEAR(month_year) as year')
+            ->orderBy('year', 'desc') // Sort years in descending order
+            ->pluck('year');
+
+        // Fetch distinct categories
+        $categories = Budget::distinct('category')
+            ->pluck('category');
+
+        // Apply filters based on the request
+        $query = Budget::query();
+        if ($request->filled('month')) {
+            $query->whereMonth('month_year', $request->input('month'));
+        }
+        if ($request->filled('year')) {
+            $query->whereYear('month_year', $request->input('year'));
+        }
+        if ($request->filled('category')) {
+            $query->where('category', $request->input('category'));
+        }
+
+        $budgets = $query->get();
+
+        return view('budget.index', compact('budgets', 'months', 'years', 'categories'));
     }
+
+
 
     // Show the Add Budget Form
     public function create()
@@ -58,30 +90,24 @@ class BudgetController extends Controller
     }
     public function spend()
     {
-        // Get unique budget categories from the budgets table
-        $categories = Budget::where('user_id', auth()->id())
-                            ->pluck('category')
-                            ->unique()
-                            ->toArray();
+        // Get all budgets for the authenticated user
+        $budgets = Budget::where('user_id', auth()->id())->get();
 
-        // Pass categories to the view
-        return view('budget.spend', compact('categories'));
+        // Pass the budgets to the view
+        return view('budget.spend', compact('budgets'));
     }
+
     public function storeSpend(Request $request)
     {
         $request->validate([
-            'category' => 'required|string',
+            'category_month' => 'required|exists:budgets,id', // Ensure the selected budget ID exists
             'amount' => 'required|numeric|min:0',
         ]);
 
-        // Find the budget record by category and user
-        $budget = Budget::where('user_id', auth()->id())
-                        ->where('category', $request->category)
-                        ->first();
-
-        if (!$budget) {
-            return redirect()->route('budgets.spend')->withErrors('Selected category does not exist.');
-        }
+        // Find the budget record by its ID
+        $budget = Budget::where('id', $request->category_month)
+                        ->where('user_id', auth()->id())
+                        ->firstOrFail();
 
         // Subtract the amount spent from the remaining amount
         $budget->remaining_amount -= $request->amount;
@@ -92,10 +118,9 @@ class BudgetController extends Controller
         // Check for overspending
         if ($budget->remaining_amount < 0) {
             $overspent = abs($budget->remaining_amount);
-            return redirect()->route('budgets.index')->with('success', "Expense recorded! You have overspent by $${overspent} in the '{$budget->category}' category.");
+            return redirect()->route('budgets.index')->with('success', "Expense recorded! You have overspent by $${overspent} in the '{$budget->category}' category for " . \Carbon\Carbon::parse($budget->month_year)->format('F Y') . ".");
         }
 
         return redirect()->route('budgets.index')->with('success', 'Expense recorded successfully!');
     }
-
 }

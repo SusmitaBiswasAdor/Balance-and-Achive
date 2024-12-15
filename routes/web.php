@@ -72,4 +72,6 @@ Route::prefix('tasks/{task}/subtasks')->group(function () {
 //Atanu
 Route::get('/admin', [AdminController::class, 'showAdmin'])->name('admin');
 Route::get('/admin/manage-users', [AdminController::class, 'manageUsers'])->name('admin.manage-users');
+Route::get('/admin/tasks', [AdminController::class, 'showTasks'])->name('admin.tasks');
 Route::patch('/admin/users/{user}', [AdminController::class, 'updateUserStatus'])->name('admin.update-user-status');
+Route::get('/admin/spendings', [AdminController::class, 'spendingTrends'])->name('admin.spendings');

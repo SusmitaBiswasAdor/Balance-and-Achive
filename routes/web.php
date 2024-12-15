@@ -7,6 +7,7 @@ use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\OtpVerificationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\BudgetController;
+use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -67,3 +68,8 @@ Route::prefix('tasks/{task}/subtasks')->group(function () {
     Route::delete('/{subtask}', [SubtaskController::class, 'destroy'])->name('subtasks.destroy');
     Route::get('/manage', [SubtaskController::class, 'manage'])->name('subtasks.manage');
 });
+
+//Atanu
+Route::get('/admin', [AdminController::class, 'showAdmin'])->name('admin');
+Route::get('/admin/manage-users', [AdminController::class, 'manageUsers'])->name('admin.manage-users');
+Route::patch('/admin/users/{user}', [AdminController::class, 'updateUserStatus'])->name('admin.update-user-status');

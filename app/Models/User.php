@@ -24,6 +24,7 @@ class User extends Authenticatable
         // Add the following fields
         'phone',
         'dob',
+        'active',
 
 
     ];

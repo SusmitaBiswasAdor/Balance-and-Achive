@@ -26,6 +26,10 @@
                                 @csrf
                                 <button class="ml-4 text-red-600 hover:text-red-800">Logout</button>
                             </form>
+                            
+                            @if(Auth::user()->role !== 'user')
+                                <a href="{{ route('admin') }}" class="ml-4 text-gray-800 hover:text-green-500">Admin</a>
+                            @endif
                         @else
                             <a href="{{ route('login') }}" class="text-gray-800 hover:text-green-500">Login</a>
                             @if (Route::has('register'))

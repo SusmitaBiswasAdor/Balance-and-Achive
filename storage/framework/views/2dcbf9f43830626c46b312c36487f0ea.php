@@ -24,6 +24,18 @@
                 <p class="text-gray-600">Analyze total spending trends across all users.</p>
                 <a href="<?php echo e(route('admin.spendings')); ?>" class="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition-colors duration-300">View Spendings</a>
             </div>
+            <!-- Team Productivity Section -->
+            <div class="feature bg-blue-50 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                <h2 class="text-2xl font-semibold mb-2 text-blue-800">Team Productivity</h2>
+                <p class="text-gray-600">View average task completion times.</p>
+                <a href="<?php echo e(route('admin.productivity')); ?>" class="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition-colors duration-300">View Productivity</a>
+            </div>
+            <!-- Team Dashboard Section -->
+            <div class="feature bg-blue-50 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                <h2 class="text-2xl font-semibold mb-2 text-blue-800">Team Dashboard</h2>
+                <p class="text-gray-600">View key performance indicators and manage the system.</p>
+                <a href="<?php echo e(route('admin.dashboard')); ?>" class="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition-colors duration-300">View Dashboard</a>
+            </div>
         </div>
     </div>
 </div>

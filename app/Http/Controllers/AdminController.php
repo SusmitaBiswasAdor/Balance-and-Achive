@@ -63,5 +63,37 @@ class AdminController extends Controller
         return view('admin.spendings', compact('spendingData', 'totalSpending', 'spendingByCategory', 'spendingByMonth'));
     }
 
+   public function showProductivity()
+    {
+        $productivityData = \App\Models\Task::selectRaw("
+            COUNT(*) as total_tasks,
+            AVG(TIMESTAMPDIFF(MINUTE, created_at, updated_at)) as avg_completion_time
+        ")
+        ->where('status', 'done')
+        ->first();
+
+        return view('admin.productivity', compact('productivityData'));
+    }
+
+    public function showDashboard()
+    {
+        $taskStats = \App\Models\Task::selectRaw("
+            COUNT(CASE WHEN status = 'done' THEN 1 END) as completed_tasks,
+            COUNT(CASE WHEN status != 'done' THEN 1 END) as pending_tasks
+        ")->first();
+
+        $topExpenseCategories = \App\Models\Budget::selectRaw("
+            category, 
+            SUM(budget_amount - remaining_amount) as total_spent
+        ")
+        ->groupBy('category')
+        ->orderBy('total_spent', 'desc')
+        ->take(5)
+        ->get();
+
+        return view('admin.dashboard', compact('taskStats', 'topExpenseCategories'));
+    }
+
+
 
 }

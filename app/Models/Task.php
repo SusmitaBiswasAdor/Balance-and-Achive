@@ -5,6 +5,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Project; 
+use App\Models\User; 
+use App\Models\Subtask; 
 
 class Task extends Model
 {
@@ -16,6 +19,30 @@ class Task extends Model
      * @var array
      */
     protected $fillable = [
-        'title', 'description', 'due_date', 'priority', 'status',
+        'title',
+        'description',
+        'project_id',
+        'status',
+        'priority',
+        'due_date',
     ];
+
+    protected $casts = [
+        'due_date' => 'datetime',
+    ];
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function subtasks()
+    {
+        return $this->hasMany(Subtask::class);
+    }
 }

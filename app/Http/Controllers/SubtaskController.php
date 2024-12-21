@@ -33,7 +33,7 @@ class SubtaskController extends Controller
         ]);
 
         return redirect()
-            ->route('subtasks.index', $task)
+            ->route('tasks.show', $task)
             ->with('success', 'Subtask created successfully.');
     }
 
@@ -55,13 +55,10 @@ class SubtaskController extends Controller
             'status' => 'sometimes|in:to_do,in_progress,done',
         ]);
 
-        $subtask->update([
-            'title' => $request->title,
-            'status' => $request->status,
-        ]);
+        $subtask->update($request->only(['title', 'status']));
 
         return redirect()
-            ->route('subtasks.index', $task)
+            ->route('tasks.show', $task)
             ->with('success', 'Subtask updated successfully.');
     }
 
@@ -73,7 +70,7 @@ class SubtaskController extends Controller
         $subtask->delete();
 
         return redirect()
-            ->route('subtasks.index', $task)
+            ->route('tasks.show', $task)
             ->with('success', 'Subtask deleted successfully.');
     }
 }

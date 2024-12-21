@@ -2,42 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Task;
-use App\Rules\DueDateNotPast;
+use App\Models\Project;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::orderByRaw("FIELD(priority, 'high', 'medium', 'low')")->get();
+        $tasks = auth()->user()->tasks()
+            ->with('project')
+            ->orderBy('due_date')
+            ->get();
+        
         return view('tasks.index', compact('tasks'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return view('tasks.create');
+        $project = null;
+        if ($request->has('project_id')) {
+            $project = Project::findOrFail($request->project_id);
+        }
+        
+        return view('tasks.create', compact('project'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'due_date' => ['nullable', 'date', new DueDateNotPast],
+            'project_id' => 'required|exists:projects,id',
             'priority' => 'required|in:low,medium,high',
             'status' => 'required|in:to_do,in_progress,done',
+            'due_date' => 'required|date',
         ]);
 
-        Task::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'due_date' => $request->due_date,
-            'priority' => $request->priority,
-            'status' => $request->status,
-        ]);
+        $task = auth()->user()->tasks()->create($validated);
 
-        return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
+        return redirect()->route('projects.show', $task->project_id)
+            ->with('success', 'Task created successfully.');
+    }
+
+    public function show(Task $task)
+    {
+        return view('tasks.show', compact('task'));
     }
 
     public function edit(Task $task)
@@ -47,29 +58,26 @@ class TaskController extends Controller
 
     public function update(Request $request, Task $task)
     {
-        
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'due_date' => ['nullable', 'date', new DueDateNotPast],
-        'priority' => 'required|in:low,medium,high',
-        'status' => 'required|in:to_do,in_progress,done',
-    ]);
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'priority' => 'required|in:low,medium,high',
+            'status' => 'required|in:to_do,in_progress,done',
+            'due_date' => 'nullable|date',
+        ]);
 
-    $task->update([
-        'title' => $request->title,
-        'description' => $request->description,
-        'due_date' => $request->due_date,
-        'priority' => $request->priority,
-        'status' => $request->status,
-    ]);
-    
-        return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
+        $task->update($validated);
+
+        return redirect()->route('projects.show', $task->project_id)
+            ->with('success', 'Task updated successfully.');
     }
 
     public function destroy(Task $task)
     {
+        $projectId = $task->project_id;
         $task->delete();
-        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
+
+        return redirect()->route('projects.show', $projectId)
+            ->with('success', 'Task deleted successfully.');
     }
 }

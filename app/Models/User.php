@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Project; // Add this line
+use App\Models\Task; // Add this line
 
 class User extends Authenticatable
 {
@@ -25,8 +27,6 @@ class User extends Authenticatable
         'phone',
         'dob',
         'active',
-
-
     ];
 
     /**
@@ -50,5 +50,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the projects for the user.
+     */
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
+
+    /**
+     * Get the tasks for the user.
+     */
+    public function tasks()
+    {
+        return $this->hasManyThrough(Task::class, Project::class);
     }
 }

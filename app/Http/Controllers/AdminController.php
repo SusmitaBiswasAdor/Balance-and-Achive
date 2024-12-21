@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Task;
+use App\Models\Project;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -63,7 +64,7 @@ class AdminController extends Controller
         return view('admin.spendings', compact('spendingData', 'totalSpending', 'spendingByCategory', 'spendingByMonth'));
     }
 
-   public function showProductivity()
+    public function showProductivity()
     {
         $productivityData = \App\Models\Task::selectRaw("
             COUNT(*) as total_tasks,
@@ -77,10 +78,10 @@ class AdminController extends Controller
 
     public function showDashboard()
     {
-        $taskStats = \App\Models\Task::selectRaw("
-            COUNT(CASE WHEN status = 'done' THEN 1 END) as completed_tasks,
-            COUNT(CASE WHEN status != 'done' THEN 1 END) as pending_tasks
-        ")->first();
+        $taskStats = Task::selectRaw('
+            SUM(CASE WHEN status = "done" THEN 1 ELSE 0 END) as completed_tasks,
+            SUM(CASE WHEN status != "done" THEN 1 ELSE 0 END) as pending_tasks
+        ')->first();
 
         $topExpenseCategories = \App\Models\Budget::selectRaw("
             category, 
@@ -91,9 +92,11 @@ class AdminController extends Controller
         ->take(5)
         ->get();
 
-        return view('admin.dashboard', compact('taskStats', 'topExpenseCategories'));
+        $recentProjects = Project::withCount('tasks')
+            ->orderBy('created_at', 'desc')
+            ->take(4)
+            ->get();
+
+        return view('admin.dashboard', compact('taskStats', 'topExpenseCategories', 'recentProjects'));
     }
-
-
-
 }

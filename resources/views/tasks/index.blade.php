@@ -1,81 +1,117 @@
-
 @extends('layouts.app')
 
+@php
+use Illuminate\Support\Str;
+@endphp
+
 @section('content')
-<div class="container mx-auto p-4">
-    <h1 class="text-3xl font-bold mb-6 text-center">Tasks</h1>
-
-    @if (session('success'))
-        <div class="mb-4 text-green-600 text-center">
-            {{ session('success') }}
+<div class="container mx-auto px-4 py-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">All Tasks</h1>
+            <a href="{{ route('tasks.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                Create Task
+            </a>
         </div>
-    @endif
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @foreach ($tasks as $task)
-            <div class="task bg-white p-6 rounded-lg shadow-md">
-                <h2 class="text-2xl font-semibold mb-2">{{ $task->title }}</h2>
-                <p class="mb-2 text-gray-700">{{ $task->description }}</p>
-                <p class="mb-2 text-gray-500">Due Date: {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y, h:i A') }}</p>
-                <form method="POST" action="{{ route('tasks.update', $task) }}" class="space-y-4" id="form-{{ $task->id }}">
-                    @csrf
-                    @method('PUT')
-                    <div>
-                        <label for="priority-{{ $task->id }}" class="block text-sm font-medium text-gray-700">Priority:</label>
-                        <select id="priority-{{ $task->id }}" name="priority" required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-                            onchange="submitForm({{ $task->id }})">
-                            <option value="low" {{ $task->priority == 'low' ? 'selected' : '' }} class="text-green-600">Low</option>
-                            <option value="medium" {{ $task->priority == 'medium' ? 'selected' : '' }} class="text-yellow-600">Medium</option>
-                            <option value="high" {{ $task->priority == 'high' ? 'selected' : '' }} class="text-red-600">High</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="status-{{ $task->id }}" class="block text-sm font-medium text-gray-700">Status:</label>
-                        <select id="status-{{ $task->id }}" name="status" required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-                            onchange="submitForm({{ $task->id }})">
-                            <option value="to_do" {{ $task->status == 'to_do' ? 'selected' : '' }} class="text-gray-600">To Do</option>
-                            <option value="in_progress" {{ $task->status == 'in_progress' ? 'selected' : '' }} class="text-blue-600">In Progress</option>
-                            <option value="done" {{ $task->status == 'done' ? 'selected' : '' }} class="text-green-600">Done</option>
-                        </select>
-                    </div>
-                </form>
-                <div class="relative inline-block text-left mt-4">
-                    <div>
-                        <button onclick="toggleDropdown('dropdown-{{ $task->id }}')" type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" id="menu-button" aria-expanded="true" aria-haspopup="true">
-                            Actions
-                            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M5.293 9.293a1 1 0 011.414 0L10 12.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div id="dropdown-{{ $task->id }}" class="hidden origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
-                        <div class="py-1 space-y-1" role="none">
-                            <a href="{{ route('tasks.edit', $task) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem" tabindex="-1" id="menu-item-0">Edit</a>
-                            <a href="{{ route('subtasks.index', $task) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem" tabindex="-1" id="menu-item-1">Subtasks</a>
-                            <form action="{{ route('tasks.destroy', $task) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this task?');" role="none">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-gray-700 block w-full text-left px-4 py-2 text-sm hover:bg-gray-100" role="menuitem" tabindex="-1" id="menu-item-2">Delete</button>
-                            </form>
-                            <a href="{{ route('tasks.create') }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem" tabindex="-1" id="menu-item-3">Create Task</a>
-                        </div>
-                    </div>
-                </div>
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ session('success') }}
             </div>
-        @endforeach
+        @endif
+
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Title
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Project
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Priority
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Due Date
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @forelse($tasks as $task)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        <a href="{{ route('tasks.show', $task) }}" class="hover:text-blue-600">
+                                            {{ $task->title }}
+                                        </a>
+                                    </div>
+                                    @if($task->description)
+                                        <div class="text-sm text-gray-500">
+                                            {{ Str::limit($task->description, 50) }}
+                                        </div>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($task->project)
+                                        <a href="{{ route('projects.show', $task->project) }}" class="text-sm text-blue-600 hover:text-blue-900">
+                                            {{ $task->project->title }}
+                                        </a>
+                                    @else
+                                        <span class="text-sm text-gray-500">No Project</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        {{ $task->status === 'completed' ? 'bg-green-100 text-green-800' : 
+                                           ($task->status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
+                                           'bg-gray-100 text-gray-800') }}">
+                                        {{ str_replace('_', ' ', ucfirst($task->status)) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        {{ $task->priority === 'high' ? 'bg-red-100 text-red-800' : 
+                                           ($task->priority === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
+                                           'bg-green-100 text-green-800') }}">
+                                        {{ ucfirst($task->priority) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $task->due_date ? $task->due_date->format('M d, Y') : 'No due date' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <a href="{{ route('tasks.edit', $task) }}" class="text-blue-600 hover:text-blue-900">Edit</a>
+                                        <form action="{{ route('tasks.destroy', $task) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this task?')">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                    No tasks found
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
-
-<script>
-    function submitForm(taskId) {
-        document.getElementById('form-' + taskId).submit();
-    }
-
-    function toggleDropdown(id) {
-        var element = document.getElementById(id);
-        element.classList.toggle('hidden');
-    }
-</script>

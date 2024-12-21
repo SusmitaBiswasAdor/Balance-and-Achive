@@ -11,12 +11,22 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = auth()->user()->tasks()
+        // Get active tasks (to_do and in_progress) sorted by priority
+        $activeTasks = auth()->user()->tasks()
             ->with('project')
-            ->orderBy('due_date')
+            ->whereIn('tasks.status', ['to_do', 'in_progress'])
+            ->orderByRaw("FIELD(tasks.priority, 'high', 'medium', 'low')")
+            ->orderBy('tasks.due_date')
+            ->get();
+
+        // Get completed tasks
+        $completedTasks = auth()->user()->tasks()
+            ->with('project')
+            ->where('tasks.status', 'done')
+            ->orderBy('tasks.updated_at', 'desc')
             ->get();
         
-        return view('tasks.index', compact('tasks'));
+        return view('tasks.index', compact('activeTasks', 'completedTasks'));
     }
 
     public function create(Request $request)
